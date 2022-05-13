@@ -338,10 +338,7 @@ public:
 
     void takeinput()
     {
-        int initalState[puzzleDimension][puzzleDimension];
-
         cout<<"Enter the first row:";
-
         for(int i=0; i<puzzleDimension; i++)
         {
             cin>>initalState[0][i];
