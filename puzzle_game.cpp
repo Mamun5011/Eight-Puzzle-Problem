@@ -165,18 +165,19 @@ public:
         if(mode==Misplaced_Tile)
         {
             v.H_N = misPlacedTilesCost(v.state,finalState);
+            v.calculateTotalCost();
         }
         else if(mode==Uniform_Cost)
         {
-            v.G_N=manhattanDistanceCost(v.state,finalState);
             v.H_N = 0;
         }
         else if(mode==Manhattan_Distance)
         {
             v.H_N = manhattanDistanceCost(v.state,finalState);
+            v.calculateTotalCost();
         }
 
-        v.calculateTotalCost();
+
 
         return v;
     }
@@ -202,6 +203,7 @@ public:
         if(mode==Misplaced_Tile)
         {
             startState.H_N = misPlacedTilesCost(initialState,finalState);
+            startState.calculateTotalCost();
         }
         else if(mode==Uniform_Cost)
         {
@@ -210,11 +212,12 @@ public:
         else if(mode==Manhattan_Distance)
         {
             startState.H_N = manhattanDistanceCost(initialState,finalState);
+            startState.calculateTotalCost();
         }
 
         ///Inserting the very first state into the Queue
 
-        startState.calculateTotalCost();
+
         if(mode==Misplaced_Tile)Q1.push(startState);
         else if(mode==Uniform_Cost)Q2.push(startState);
         else if(mode==Manhattan_Distance)Q3.push(startState);
@@ -257,14 +260,14 @@ public:
             cout<<"\nThe best state to expand with g(n)= "<<CuroptimalState.G_N<<" h(n)= "<<CuroptimalState.H_N<<endl;
             printPuzzleState(CuroptimalState.state);
 
-             ///Misplaced Tiles or Mnahattan distance terminating condition for goal state
+            ///Misplaced Tiles or Mnahattan distance terminating condition for goal state
 
             if ((mode==Misplaced_Tile || mode==Manhattan_Distance)&& CuroptimalState.H_N == 0)
             {
                 cout<<"\n\nGoal State !\n\n";
                 cout<<"Solution depth was  "<<CuroptimalState.depth<<endl;
                 cout<<"Number of Nodes Expanded: "<<nodeVisited<<endl;
-                cout<<"Max queue size "<<maxQueueSIze<<"\n\n\n";
+                cout<<"Max queue size "<<maxQueueSIze<<"\n";
                 return;
             }
 
@@ -339,6 +342,7 @@ public:
     void takeinput()
     {
         cout<<"Enter the first row:";
+
         for(int i=0; i<puzzleDimension; i++)
         {
             cin>>initalState[0][i];
@@ -372,6 +376,8 @@ public:
             }
         }
 
+        //cout<<"blank x"<<initial_state_blank_Tile_X<<" blank y"<<initial_state_blank_Tile_Y<<endl;
+
     }
 
     void solvePuzzle()
@@ -393,7 +399,11 @@ public:
                 cout<<"Your Goal state: "<<endl;
                 printPuzzleState(finalState);
                 cout<<"Default Search:  A* Search, Default Heuristic: Misplaced Tiles"<<endl;
+                auto t_start = std::chrono::high_resolution_clock::now();
                 A_Star_Search(initalState,finalState,Misplaced_Tile);
+                auto t_end = std::chrono::high_resolution_clock::now();
+                double elapsed_time_ms = std::chrono::duration<double, std::milli>(t_end-t_start).count();
+                cout<<"Time needed "<<elapsed_time_ms<<" ms\n\n"<<endl;
             }
 
             else if(n==2)
@@ -412,13 +422,15 @@ public:
                 cout<<"Select algorithm. \nPress.....\n (1) for Uniform Cost Search,\n (2) for the Misplaced Tile Heuristic, or\n (3) the Manhattan Distance Heuristic"<<endl;
                 int val;
                 cin>>val;
+                auto t_start = std::chrono::high_resolution_clock::now();
                 if(val==1)A_Star_Search(initalState,finalState,Uniform_Cost);
                 else if(val==2)A_Star_Search(initalState,finalState,Misplaced_Tile);
                 else if(val==3)A_Star_Search(initalState,finalState,Manhattan_Distance);
                 else
                     cout<<"You have to press between 1 and 3"<<endl;
-
-
+                auto t_end = std::chrono::high_resolution_clock::now();
+                double elapsed_time_ms = std::chrono::duration<double, std::milli>(t_end-t_start).count();
+                cout<<"Time needed "<<elapsed_time_ms<<" ms\n\n"<<endl;
             }
 
             else
